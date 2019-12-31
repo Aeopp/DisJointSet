@@ -1,0 +1,68 @@
+#include <iostream>
+#include <memory>
+using namespace std;
+
+#ifndef DISJOINTSET_H
+#define DISJOINTSET_H
+
+typedef  struct tagDisjointSet
+{
+	struct tagDisjointSet* Parent;
+	void* Data;
+}DisJointSet;
+
+
+void DS_UnionSet(DisJointSet* Set1, DisJointSet* Set2);
+DisJointSet* DS_FindSet(DisJointSet* Set);
+DisJointSet* DS_MakeSet(void* NewData);
+void DS_DestroySet(DisJointSet * Set);
+#endif
+
+void DS_UnionSet(DisJointSet* Set1, DisJointSet* Set2)
+{
+	Set2 = DS_FindSet(Set2);
+	Set2->Parent = Set1;
+};
+
+DisJointSet* DS_FindSet(DisJointSet* Set)
+{
+	 while(  Set->Parent !=nullptr )
+	{
+		Set = Set->Parent;	 
+	}
+	return Set;
+};
+
+DisJointSet* DS_MakeSet(void* NewData)
+{
+	auto NewNode = new DisJointSet();
+	NewNode->Data = NewData;
+	NewNode->Parent = nullptr;
+
+	return NewNode;
+}
+
+void DS_DestroySet(DisJointSet* Set)
+{
+	delete Set;
+}
+#include <vector>
+int main()
+{
+	vector<int> Temp = { 1,2,3,4 };
+	DisJointSet* Set1 = DS_MakeSet(&Temp[0]);
+	DisJointSet* Set2 = DS_MakeSet(&Temp[1]);
+	DisJointSet* Set3  = DS_MakeSet(&Temp[2]);
+	DisJointSet* Set4 = DS_MakeSet(&Temp[3]);
+	bool bSet = DS_FindSet(Set1) == DS_FindSet(Set2);
+	cout << "Set1 == Set2 : " << bSet << endl;
+	DS_UnionSet(Set1, Set3);
+	 bSet = DS_FindSet(Set1) == DS_FindSet(Set3 );
+	cout << "Set1 == Set3 : " << bSet << endl;
+	DS_UnionSet(Set3, Set4);
+
+	bSet = DS_FindSet(Set3 ) == DS_FindSet(Set4 ); 
+	cout << "Set3 == Set4 : " << bSet << endl; 
+
+	return 0;
+}
